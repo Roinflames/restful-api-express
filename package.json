@@ -1,0 +1,10 @@
+{
+  "name": "energia-restful-api",
+  "main": "server.js",
+  "dependencies":{
+    "express": "latest",
+    "mongoose": "latest",
+    "node-restful": "latest",
+    "body-parser": "latest"
+  }
+}
