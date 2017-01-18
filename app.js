@@ -89,11 +89,41 @@ apiRoutes.get('/users', passport.authenticate('jwt', {session: false}), function
   });
 });
 
-apiRoutes.get('/users/:user_id', passport.authenticate('jwt', {session: false}), function(req, res){
+apiRoutes.route('/users/:user_id')
+
+  .get(passport.authenticate('jwt', {session: false}), function(req, res){
         User.findById(req.params.user_id, function(err, user) {
             if (err)
                 res.send(err);
             res.json(user);
+        });
+    })
+
+  .put(function(req, res){
+
+    User.findById(req.params.user_id, function(err, user){
+      if(err)
+        res.send(err);
+
+      user.email = req.body.email;
+
+      user.save(function(err){
+        if (err)
+          res.send(err);
+
+        res.json({ message: 'Datos de usuario actualizados!'});
+      });
+    });
+  })
+
+  .delete(function(req, res) {
+        User.remove({
+            _id: req.params.user_id
+        }, function(err, user) {
+            if (err)
+                res.send(err);
+
+            res.json({ message: 'Usuario borrado.' });
         });
     });
 
