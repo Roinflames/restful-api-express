@@ -1,10 +1,16 @@
 {
   "name": "energia-restful-api",
   "main": "server.js",
-  "dependencies":{
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.15.2",
     "express": "latest",
+    "jsonwebtoken": "^7.2.1",
     "mongoose": "latest",
+    "morgan": "^1.7.0",
     "node-restful": "latest",
-    "body-parser": "latest"
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
+    "pug": "^2.0.0-beta11"
   }
 }
