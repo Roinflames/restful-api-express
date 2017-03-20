@@ -28,7 +28,7 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 
 // COnectar DB
-mongoose.connect(config.database);
+mongoose.connect(config.url);
 
 //Rutas de la api
 var apiRoutes = express.Router();
@@ -83,7 +83,7 @@ apiRoutes.post('/authenticate', function(req, res){
           var token = jwt.sign(user, config.secret, {
             expiresIn: 10000 //segundos
           });
-          res.json({ success: true, token: 'JWT '+ token});
+          res.json({ success: true, token: 'JWT '+ token, user: user.email});
         } else {
           res.send({ success: false, message: 'Fallo en la autenticación. La clave no coincide.'});
         }
@@ -94,7 +94,8 @@ apiRoutes.post('/authenticate', function(req, res){
 
 //proteger una zona con jwt
 apiRoutes.get('/dashboard', passport.authenticate('jwt', {session: false}), function(req, res) {
-  res.json({estado: 'autenticado', user_id: req.user._id, Useremail:req.user.email});
+  res.json({estado: 'autenticado', user_id: req.user._id, email:req.user.email, role:req.user.role});
+  //console.log(req);
 });
 
 apiRoutes.get('/users', passport.authenticate('jwt', {session: false}), function(req, res){
