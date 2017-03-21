@@ -9,16 +9,10 @@ var passport = require('passport');
 var config = require('./config/main');
 var User = require('./app/models/user');
 import users from './routes/user';
-import register from './routes/register';
-import auth from './routes/authenticate';
+import auth from './routes/auth';
 
 var port = process.env.PORT || 3001;
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-
-// POST req para uso de la API
-//TODO porque false o true?
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
@@ -35,13 +29,8 @@ mongoose.connect(config.url);
 
 //Rutas de la api
 var apiRoutes = express.Router();
-/*
-app.get('/', function(req, res){
-  res.json({welcome: "Bienvenido al API Energía. Encontrara las rutas en /api/<ruta>"});
-});
-*/
+
 apiRoutes.use('/user', users);
-apiRoutes.use('/register', register);
 apiRoutes.use('/auth', auth);
 
  app.get('/', (req, res) => {
@@ -54,6 +43,6 @@ app.get('/api', (req, res) => {
 
 app.use('/api', apiRoutes);
 
-app.listen(port, function(){
+app.listen(port, () => {
   console.log("Escuchando en el puerto 3001!");
 });

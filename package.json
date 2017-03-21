@@ -2,19 +2,21 @@
   "name": "energia-restful-api",
   "main": "server.js",
   "scripts": {
-    "server": "babel-node app.js"
+    "server": "nodemon --watch ./ --exec babel-node app.js"
   },
   "dependencies": {
     "bcrypt": "^1.0.2",
     "body-parser": "^1.15.2",
     "express": "latest",
     "jsonwebtoken": "^7.2.1",
+    "lodash": "^4.17.4",
     "mongoose": "latest",
     "morgan": "^1.7.0",
     "node-restful": "latest",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
-    "pug": "^2.0.0-beta11"
+    "pug": "^2.0.0-beta11",
+    "validator-js": "^0.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.0",

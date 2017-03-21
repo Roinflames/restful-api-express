@@ -1,8 +1,8 @@
 import express from 'express';
-var mongoose = require('mongoose');
-var jwt = require('jsonwebtoken');
-var User = require('../app/models/user');
-var config = require('../config/main');
+let mongoose = require('mongoose');
+let jwt = require('jsonwebtoken');
+let User = require('../app/models/user');
+let config = require('../config/main');
 
 let apiRoutes = express.Router();
 
@@ -50,6 +50,10 @@ apiRoutes.post('/signup',  (req,res) => {
     res.json({ success: true, message: 'Usuario registrado con éxito.'});
   });
   }
+});
+
+apiRoutes.post('/signout', (req, res) => {
+  res.json({state: 'signout'});
 });
 
 export default apiRoutes;

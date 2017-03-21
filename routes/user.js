@@ -1,20 +1,14 @@
 import express from 'express';
-var passport = require('passport');
+let passport = require('passport');
 require('../config/passport')(passport);
+let mongoose = require('mongoose');
+let User = require('../app/models/user');
 
 let apiRoutes = express.Router();
 let user = 'rorritow';
 
-apiRoutes.get('/', (req, res) => {
-  res.json({ user: user });
-});
-
-apiRoutes.get('/device', (req,res) => {
-  res.send({id: '1', equipo: 'raspi', sensores: ['1', '2', '3']});
-});
-
-apiRoutes.get('/users', passport.authenticate('jwt', {session: false}), function(req, res){
-  User.find(function(err, users){
+apiRoutes.get('/', passport.authenticate('jwt', {session: false}), (req, res) => {
+  User.find((err, users) => {
     if(err)
       res.send(err);
 
@@ -22,25 +16,25 @@ apiRoutes.get('/users', passport.authenticate('jwt', {session: false}), function
   });
 });
 
-apiRoutes.route('/users/:user_id')
+apiRoutes.route('/:user_id')
 
   .get(passport.authenticate('jwt', {session: false}), (req, res) => {
-        User.findById(req.params.user_id, function(err, user) {
+        User.findById(req.params.user_id, (err, user) => {
             if (err)
                 res.send(err);
             res.json(user);
         });
     })
 
-  .put(function(req, res){
+  .put((err, user) => {
 
-    User.findById(req.params.user_id, function(err, user){
+    User.findById(req.params.user_id, (err, user) => {
       if(err)
         res.send(err);
 
       user.email = req.body.email;
 
-      user.save(function(err){
+      user.save((err) => {
         if (err)
           res.send(err);
 
@@ -49,10 +43,10 @@ apiRoutes.route('/users/:user_id')
     });
   })
 
-  .delete(function(req, res) {
+  .delete((err, user) =>  {
         User.remove({
             _id: req.params.user_id
-        }, function(err, user) {
+        }, (err, user) =>  {
             if (err)
                 res.send(err);
 
