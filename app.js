@@ -1,17 +1,19 @@
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-var path = require('path');
-var bodyParser = require('body-parser');
-var morgan = require('morgan');
-var jwt = require('jsonwebtoken');
-var passport = require('passport');
-var config = require('./config/main');
-var User = require('./app/models/user');
+import express from 'express';
+import bodyParser from 'body-parser';
+import path from 'path';
+import morgan from 'morgan';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+import passport from 'passport';
+
+import config from './config/main';
+import User from './app/models/user';
 import users from './routes/user';
 import auth from './routes/auth';
 
-var port = process.env.PORT || 3001;
+let app = express();
+
+let port = process.env.PORT || 3001;
 
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
@@ -30,19 +32,14 @@ mongoose.connect(config.url);
 //Rutas de la api
 var apiRoutes = express.Router();
 
+app.use('/api', apiRoutes);
 apiRoutes.use('/user', users);
 apiRoutes.use('/auth', auth);
 
- app.get('/', (req, res) => {
-  res.json({welcome: "Bienvenido al API Energía. Encontrara las rutas en /api/<ruta>"});
- });
-
-app.get('/api', (req, res) => {
-  res.json({apiInfo: "Rutas disponibles: /register, /authenticate, /dashboard, /users, /users/:user_id. Recuerde utilizar /api"});
+app.get('/', (req, res) => {
+  res.json({welcome: "Bienvenido al API Energía. Encontrara las rutas en /api/<ruta>. ruta: /auth/signup /auth/signin /user"});
 });
 
-app.use('/api', apiRoutes);
-
 app.listen(port, () => {
-  console.log("Escuchando en el puerto 3001!");
+  console.log("Escuchando en el puerto", port);
 });

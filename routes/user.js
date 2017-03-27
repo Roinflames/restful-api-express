@@ -1,8 +1,8 @@
 import express from 'express';
-let passport = require('passport');
+import passport from 'passport';
 require('../config/passport')(passport);
-let mongoose = require('mongoose');
-let User = require('../app/models/user');
+import mongoose from 'mongoose';
+import User from '../app/models/user';
 
 let apiRoutes = express.Router();
 let user = 'rorritow';

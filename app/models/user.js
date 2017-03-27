@@ -1,5 +1,5 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 //User schema
 var UserSchema = new mongoose.Schema({
@@ -25,11 +25,11 @@ var UserSchema = new mongoose.Schema({
 UserSchema.pre('save', function(next){
   var user = this;
   if (this.isModified('password') || this.isNew){
-    bcrypt.genSalt(10, function(err, salt){
+    bcrypt.genSalt(10, (err, salt) => {
       if (err) {
         return next(err);
       }
-      bcrypt.hash(user.password, salt, function(err,hash){
+      bcrypt.hash(user.password, salt, (err,hash) => {
         if (err) {
           return next(err);
         }
@@ -44,8 +44,8 @@ UserSchema.pre('save', function(next){
 
 // comparacion del pwd
 
-UserSchema.methods.comparePassword = function(pw, cb){
-  bcrypt.compare(pw, this.password, function(err, isMatch){
+UserSchema.methods.comparePassword = (pw, cb) => {
+  bcrypt.compare(pw, this.password, (err, isMatch) => {
     if (err) {
       return cb(err);
     }

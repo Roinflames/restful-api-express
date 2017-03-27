@@ -1,26 +1,30 @@
 import express from 'express';
-let mongoose = require('mongoose');
-let jwt = require('jsonwebtoken');
-let User = require('../app/models/user');
-let config = require('../config/main');
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+
+import User from '../app/models/user';
+import config from '../config/main';
 
 let apiRoutes = express.Router();
 
-apiRoutes.get('/', (req, res) => {
-  res.render('authentication');
-});
-
 // ruta de registro de usuario para recibir jwt
 apiRoutes.post('/signin', (req, res) => {
+  console.log(req.body.email);
   User.findOne({
     email: req.body.email
   }, (err, user) => {
+    //console.log(user);
     if (err) throw (err);
 
     if(!user) {
       res.send({ success: false, message: 'Fallo en la autenticación. Usuario no registrado.'});
     } else {
+      console.log("req.body.password");
+      console.log(req.body.password);
+      //**********************************
+      //aqui ek error
       user.comparePassword(req.body.password, (err, isMatch) => {
+        console.log(req.body.password);
         if (isMatch && !err) {
           var token = jwt.sign(user, config.secret, {
             expiresIn: 10000 //segundos
