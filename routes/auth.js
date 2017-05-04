@@ -1,63 +1,24 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
+import express from 'express'
+import passport from 'passport'
+import AuthController from '../controllers/auth'
 
-import User from '../app/models/user';
-import config from '../config/main';
+const router = express.Router()
+const auth = new AuthController();
 
-let apiRoutes = express.Router();
+router.get('/', (req, res) => res.send("get auth"));
+router.post('/signin', (req, res) => auth.signin(req, res));
+router.post('/signup', (req, res) => auth.signup(req, res));
+router.post('/device/', (req, res) => auth.deviceSignin(req, res));
+router.get('/signout', (req, res) => auth.signout(req, res));
+router.post('/existEmail', (req, res) => auth.existEmail(req, res))
 
-// ruta de registro de usuario para recibir jwt
-apiRoutes.post('/signin', (req, res) => {
-  console.log(req.body.email);
-  User.findOne({
-    email: req.body.email
-  }, (err, user) => {
-    //console.log(user);
-    if (err) throw (err);
+//Social Login Google API
+router.get('/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+router.get('/google/close', passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => { auth.google(req,res)  }
+);
 
-    if(!user) {
-      res.send({ success: false, message: 'Fallo en la autenticación. Usuario no registrado.'});
-    } else {
-      console.log("req.body.password");
-      console.log(req.body.password);
-      //**********************************
-      //aqui ek error
-      user.comparePassword(req.body.password, (err, isMatch) => {
-        console.log(req.body.password);
-        if (isMatch && !err) {
-          var token = jwt.sign(user, config.secret, {
-            expiresIn: 10000 //segundos
-          });
-          res.json({ success: true, token: 'JWT '+ token, user: user.email});
-        } else {
-          res.send({ success: false, message: 'Fallo en la autenticación. La clave no coincide.'});
-        }
-      });
-    }
-  });
-});
+//Social Login Google Native
+router.post('/googlenative', (req, res) => auth.googleNative(req, res));
 
-apiRoutes.post('/signup',  (req,res) => {
-  if(!req.body.email || !req.body.password) {
-    res.json({ success: false, message: 'Porfavor ingrese email y contraseña.'});
-  } else {
-    var newUser = new User({
-      email: req.body.email,
-      password: req.body.password
-    });
-  //guardar usuario
-  newUser.save( (err) => {
-    if (err) {
-      return res.json({success: false, message: 'El correo ya existe'});
-    }
-    res.json({ success: true, message: 'Usuario registrado con éxito.'});
-  });
-  }
-});
-
-apiRoutes.post('/signout', (req, res) => {
-  res.json({state: 'signout'});
-});
-
-export default apiRoutes;
+export default router;

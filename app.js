@@ -1,45 +1,37 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import path from 'path';
-import morgan from 'morgan';
-import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
-import passport from 'passport';
+import express from 'express'
+import bodyParser from 'body-parser'
+import logger from 'morgan'
+import mongoose from 'mongoose'
+import passport from 'passport'
+import { mongo } from './config/config'
+import routesBinder from './libs/Route'
+const app = express()
 
-import config from './config/main';
-import User from './app/models/user';
-import users from './routes/user';
-import auth from './routes/auth';
+const database  = process.env.MONGO_URL || mongo.uri
 
-let app = express();
+mongoose.Promise = global.Promise; //mongoose uso de promesas es6
+mongoose.connect(database);
 
-let port = process.env.PORT || 3001;
+//Middlewares
 
-app.use(bodyParser.urlencoded({ extended: true}));
-app.use(bodyParser.json());
-
-//log req a la consola
-app.use(morgan('dev'));
-
-// iniciar passport
-app.use(passport.initialize());
-// Estrategia passport
+  //bodyParser json y form
+app.use(logger('dev'))
+app.use(passport.initialize())
 require('./config/passport')(passport);
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }))
 
-// COnectar DB
-mongoose.connect(config.url);
+app.get('/api', (req,res) => {
+  res.send('NeoSolar API REST');
+})
 
-//Rutas de la api
-var apiRoutes = express.Router();
+routesBinder(app)
 
-app.use('/api', apiRoutes);
-apiRoutes.use('/user', users);
-apiRoutes.use('/auth', auth);
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    message: 'El Recurso no existe'
+  });
+})
 
-app.get('/', (req, res) => {
-  res.json({welcome: "Bienvenido al API Energía. Encontrara las rutas en /api/<ruta>. ruta: /auth/signup /auth/signin /user"});
-});
-
-app.listen(port, () => {
-  console.log("Escuchando en el puerto", port);
-});
+export default app;
